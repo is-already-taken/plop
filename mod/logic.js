@@ -57,6 +57,9 @@ module.exports = (function () {
 						return template;
 					} else if(action.templateFile) {
 						return fs.readFile(makePath(action.templateFile));
+					} else if (action.type === 'modify' && action.process) {
+						// allow template to be undefined if using modify with process
+						return null;
 					} else {
 						throw Error('No valid template found for action #' + (idx + 1));
 					}

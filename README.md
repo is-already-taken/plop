@@ -84,6 +84,8 @@ actions: [{
 
 The `process` function may be called synchronously by returning the data and asynchronously by calling `this.async()` and passing the processed data to the resulting function of that call.
 
+`templateFile` and `template` may be omitted when using `process`, the `contentOfTemplate` will then be `null`.
+
 ## Baked-In Helpers
 There are a few helpers that I have found useful enough to include with plop. They are mostly case modifiers, but here is the complete list.
 
