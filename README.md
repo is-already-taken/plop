@@ -66,6 +66,24 @@ The `add` action is used to (you guessed it) add files to your project. The path
 #### Modify (Action)
 The `modify` action is similar to `add`, but the main difference is that it will use a `pattern` property to find/replace text in the file specified by the `path` property. The `pattern` property should be a RegExp and capture groups can be used in the replacement template using $1, $2, etc. More details on modify can be found in the example folder.
 
+One may add a callback using the `process` option to process the file's content programmatically. The process callback will be called with (`path, contentOfPath, contentOfTemplate, objectOfInteractivelyAskedQuestions`):
+
+```
+actions: [{
+   type: 'modify',
+   // resolved path passed as "path"
+   path: 'path/to/whatever/{{name}}.js',
+   process: function(path, contentOfPath, contentOfTemplate, data) {
+      var done = this.async();
+      done(contentOfPath.replace(/42/, contentOfTemplate));
+   },
+   // content passed as "contentOfTemplate"
+   templateFile: 'templates/template.js'
+}]
+```
+
+The `process` function may be called synchronously by returning the data and asynchronously by calling `this.async()` and passing the processed data to the resulting function of that call.
+
 ## Baked-In Helpers
 There are a few helpers that I have found useful enough to include with plop. They are mostly case modifiers, but here is the complete list.
 

@@ -4,7 +4,8 @@ module.exports = (function () {
 	var inquirer = require('inquirer'),
 		q = require('q'),
 		path = require('path'),
-		colors = require('colors');
+		colors = require('colors'),
+		runAsync = require('run-async');
 
 	var plop = require('./plop-base'),
 		fs = require('./fs-promise');
@@ -75,8 +76,30 @@ module.exports = (function () {
 						} else if (action.type === 'modify') {
 							return fs.readFile(filePath)
 								.then(function (fileData) {
-									fileData = fileData.replace(action.pattern, plop.renderString(template, data));
-									return fs.writeFile(filePath, fileData);
+									var _processDef = q.defer(),
+										processedData;
+
+									if (action.process) {
+										// handle exceptions for the sync part
+										try {
+											runAsync(action.process, function(processedData) {
+												if (processedData) {
+													_processDef.resolve(processedData);
+												} else {
+													_processDef.reject();
+												}
+											}, filePath, fileData, template, data);
+										} catch (e) {
+											_processDef.reject(new Error('Error while processing data: ' + e));
+										}
+									} else {
+										processedData = fileData.replace(action.pattern, plop.renderString(template, data));
+										_processDef.resolve(processedData);
+									}
+
+									return _processDef.promise;
+								}).then(function(processedData) {
+									return fs.writeFile(filePath, processedData);
 								});
 						} else {
 							throw Error('Invalid action type: ' + action.type);

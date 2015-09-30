@@ -31,7 +31,8 @@
     "mkdirp": "^0.5.0",
     "prompt": "^0.2.14",
     "inquirer": "^0.10.0",
-    "q": "~1.0.1"
+    "q": "~1.0.1",
+    "run-async": "~0.1.0"
   },
   "preferGlobal": "true",
   "bin": {
